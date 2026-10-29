@@ -71,6 +71,29 @@ iceberg-doctor check db.events --fail-on medium # exit 1 on medium or higher (CI
 
 Exit codes: `0` no findings at or above `--fail-on` (default `high`), `1` findings found, `2` table could not be loaded.
 
+## MCP server
+
+iceberg-doctor also runs as an MCP server, so AI agents (Claude Desktop, Claude Code, Cursor,
+and others) can diagnose tables directly. It exposes two read-only tools: `list_tables(namespace)`
+and `diagnose_table(table)`.
+
+Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "iceberg-doctor": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/Benjamin70598/iceberg-doctor", "iceberg-doctor-mcp"],
+      "env": { "ICEBERG_DOCTOR_CATALOG": "default" }
+    }
+  }
+}
+```
+
+Catalog settings come from `~/.pyiceberg.yaml` as usual (or set `PYICEBERG_HOME` in `env`).
+If Claude Desktop can't find `uvx`, use its full path (`which uvx`).
+
 ## Try it locally
 
 ```bash
@@ -81,7 +104,6 @@ uv run python scripts/make_sick_table.py   # creates a deliberately unhealthy ta
 
 ## Roadmap
 
-- MCP server so AI agents can diagnose tables
 - Spark-generated merge-on-read test tables for the delete-file check
 - Generated, safely ordered maintenance plans (`--plan`)
 - Trend view across snapshots
