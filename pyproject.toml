@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "mcp[cli]>=2.3.0",
+    "mcp[cli]>=2,<3",
     "pyiceberg[pyarrow,sql-sqlite]>=0.12.0",
     "rich>=15.0.0",
     "typer>=0.27.3",
@@ -13,6 +13,7 @@ dependencies = [
 
 [project.scripts]
 iceberg-doctor = "iceberg_doctor.cli:app"
+iceberg-doctor-mcp = "iceberg_doctor.mcp_server:main"
 
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]
