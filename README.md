@@ -1,3 +1,20 @@
+# iceberg-doctor
+
+Health checks for Apache Iceberg tables. Point it at a table and it tells you what's wrong
+and how to fix it, before the problem shows up as slow queries or a failing maintenance job.
+
+```
+$ iceberg-doctor check demo.logs
+┏━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Severity ┃ Check           ┃ Detail                                                           ┃
+┡━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ HIGH     │ snapshot_growth │ 500 commits in the hour before the latest snapshot (60/hr limit) │
+│ MEDIUM   │ snapshot_count  │ 500 live snapshots (warn at 100, high at 1,000)                  │
+│ MEDIUM   │ small_files     │ 500 of 500 data files are under 10% of the 512 MB target         │
+│ MEDIUM   │ manifest_count  │ 500 manifests in the current snapshot; slows planning            │
+│ LOW      │ retention_props │ Snapshot retention table properties not set                      │
+└──────────┴─────────────────┴──────────────────────────────────────────────────────────────────┘
+```
 
 Each finding includes a recommended fix: the Spark SQL procedure or table property change to run.
 iceberg-doctor is read-only and never modifies your table.
@@ -68,4 +85,3 @@ uv run python scripts/make_sick_table.py   # creates a deliberately unhealthy ta
 - Spark-generated merge-on-read test tables for the delete-file check
 - Generated, safely ordered maintenance plans (`--plan`)
 - Trend view across snapshots
-EOF
